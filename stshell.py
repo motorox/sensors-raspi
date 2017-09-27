@@ -6,15 +6,14 @@ there is a "sensors.ini" config file with a list of remote Bluetooth addresses (
 
 import cmd
 from ConfigParser import SafeConfigParser
-
-from sensor import SensorCallbacks, SensorTag
-
+from sensor import Sensor
+from sensor_callbacks import SensorCallbacks
 
 class SensorTagShell(cmd.Cmd):
     '''Command line like shell for sensors'''
     intro = "Welcome to CC2650 shell. Type help or ? to list commands.\n"
     prompt = '(sensor:)> '
-    st = SensorTag()
+    st = Sensor()
     sensors = []
 
     def initialize(self):

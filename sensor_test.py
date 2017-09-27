@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 import unittest
-from sensor import floatfromhex, tosigned, tosignedbyte, SensorCallbacks
-from sensor import calcAccel, calcGyro, calcHum, calcMagn, calcTmpTarget
-
+from sensor_utils import floatfromhex, tosigned, tosignedbyte
+from sensor_utils import calcAccel, calcGyro, calcHum, calcMagn, calcTmpTarget
+from sensor_callbacks import SensorCallbacks
 
 class UtilFunctionsTestCase(unittest.TestCase):
     def test_floatfromhex(self):
