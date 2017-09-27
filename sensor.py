@@ -55,17 +55,12 @@ def floatfromhex(h):
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-tag = None
 tosigned = lambda n: float(n-0x10000) if n > 0x7fff else float(n)
 tosignedbyte = lambda n: float(n-0x100) if n > 0x7f else float(n)
 
 def calcTmpTarget(objT, ambT):
-    objT = tosigned(objT)
-    ambT = tosigned(ambT)
-
-    m_tmpAmb = ambT/128.0
-    Vobj2 = objT * 0.00000015625
-    Tdie2 = m_tmpAmb + 273.15
+    Vobj2 = tosigned(objT) * 0.00000015625
+    Tdie2 = tosigned(ambT)/128.0 + 273.15
     S0 = 6.4E-14            # Calibration factor
     a1 = 1.75E-3
     a2 = -1.678E-5
@@ -130,6 +125,7 @@ class SensorTag(object):
         # if bluetooth_adr <> "":
         #     self.con = pexpect.spawn('gatttool -b ' + bluetooth_adr + ' --interactive')
         # else:
+        self.cb = {}
         self.con = pexpect.spawn('gatttool --interactive')
         self.con.expect('\[LE\]>', timeout=600)
     def connect(self, bluetooth_adr, callbacksClass):
@@ -140,7 +136,6 @@ class SensorTag(object):
             self.con.expect('Connection successful.*\[LE\]>')
             # Earlier versions of gatttool returned a different message.  Use this pattern -
             #self.con.expect('\[CON\].*>')
-            self.cb = {}
 
             #initialize the callbacks
             print "[re]starting.."
@@ -181,8 +176,6 @@ class SensorTag(object):
             self.start_notification_thread()
         except Exception, e:
             print str(e)
-            pass
-
         return
 
     def char_write_cmd(self, handle, value):
@@ -225,7 +218,6 @@ class SensorTag(object):
                 except:
                     print "Error in callback for %x" % handle
                     print sys.argv[1]
-                pass
             else:
                 print "TIMEOUT!!"
         print('notification loop ENDED !!!')
@@ -238,7 +230,6 @@ class SensorTag(object):
         except:
             print "Error in callback for %x" % handle
             print sys.argv[1]
-            pass
 
     def register_cb(self, handle, fn):
         self.cb[handle] = fn
@@ -316,7 +307,6 @@ class SensorCallbacks:
         rawP = ((v[5]<<16) + (v[4]<<8)+v[3])/100.0 # in hPa
         self.data['barotemp'] = rawT
         self.data['baropress'] = rawP
-        #print "BARO", self.data['baro']
         self.data['time'] = long(time.time() * 1000)
 
     def movement(self, v):
@@ -328,7 +318,6 @@ class SensorCallbacks:
         self.data['magnx'] = mgnx
         self.data['magny'] = mgny
         self.data['magnz'] = mgnz
-        #print "MAGN", mxyz
         # enable accelerometer
         ax = (v[7]<<8)+v[6]
         ay = (v[9]<<8)+v[8]
@@ -337,8 +326,6 @@ class SensorCallbacks:
         self.data['accelx'] = axyz[0]
         self.data['accely'] = axyz[1]
         self.data['accelz'] = axyz[2]
-        #print "ACCL", axyz
-        #print "ACCL-mag", mag
         # enable gyroscope
         gx = (v[1]<<8)+v[0]
         gy = (v[3]<<8)+v[2]
@@ -347,14 +334,13 @@ class SensorCallbacks:
         self.data['gyrox'] = gxyz[0]
         self.data['gyroy'] = gxyz[1]
         self.data['gyroz'] = gxyz[2]
-        #print "GYRO", gxyz
-
 
 if __name__ == "__main__":
-    print 'Testing sensor class'
     if len(sys.argv) < 2:
+        print "Usage: sensor.py <sensor MAC>"
         sys.exit(1)
     else:
+        print 'Reading from sensor: ' + sys.argv[1]
         st = SensorTag()
         st.connect(sys.argv[1], SensorCallbacks)
         st.start_notification_thread()

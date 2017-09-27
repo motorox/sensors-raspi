@@ -46,10 +46,37 @@ The data red from the sensor has the following structure:
 }
 ```
 
+## sensor.py
+
+This file contains two classes.
+
+`SensorTag`, the class that communicates with a sensor through Bluetooth.
+
+`SensorCallbacks` is the one who registers callbacks to read data.
+
+Also some functions to transform raw data from the sensors to something readable. They were inspired from TI sites.
+
+This file can be run in the console:
+```
+$ python sensor.py A0:E6:F8:B6:6B:85
+Reading from sensor: A0:E6:F8:B6:6B:85
+(MainThread) Preparing to connect. You might need to press the side button...
+[re]starting..
+{"accelz": 0.0, "addr": "A0:E6:F8:B6:6B:85", "accelx": 0.0, "accely": 0.0, "keys": 0, "magnz": 0.0, "magnx": 0.0, "magny": 0.0, "gyroz": 0.0, "gyrox": 0.0, "gyroy": 0.0}
+{"accelz": 1018.90625, "addr": "A0:E6:F8:B6:6B:85", "accelx": 954.3125, "accely": -1.28125, "keys": 0, "barotemp": 29.96, "magnz": -18.402099609375, "magnx": -8.941650390625, "magny": 16.693115234375, "lux": 3249, "temp": 85.89359307792137, "baropress": 1010.19, "time": 1506423349215, "gyroz": 2.6397705078125, "gyrox": 0.42724609375, "gyroy": 0.1983642578125, "humdtemp": 27.088823242187495, "ambtemp": 29.40625, "humd": 36.4957275390625, "celsiustemp": 29.940885043289647}
+^C
+(MainThread) joining Notification Thread
+(MainThread) thread Notification Thread is alive: True
+notification loop ENDED !!!
+(MainThread) joining Notification Thread
+(MainThread) thread Notification Thread is alive: True
+notification loop ENDED !!!
+```
+
 ### Steps to do on your raspberry pi (some of them) to be able to read data from the sensor
 - http://mike.saunby.net/2013/04/raspberry-pi-and-ti-cc2541-sensortag.html
 - https://github.com/uffebjorklund/TI-CC2650
-- 
+
 
 ### Links with info that was helpful
 - http://processors.wiki.ti.com/index.php/CC2650_SensorTag_User's_Guide
@@ -58,4 +85,4 @@ The data red from the sensor has the following structure:
 - https://github.com/energia/Energia/issues/740
 - https://e2e.ti.com/blogs_/b/connecting_wirelessly/archive/2015/06/11/controlling-ultra-low-power-cc2650-wireless-mcu-from-anywhere-in-the-world
 - http://pexpect.readthedocs.io/en/stable/ - spawn processes and read inputs
-- 
+ 
